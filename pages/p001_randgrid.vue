@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>EMNLS</h1>
+    <p-001-randbox />
   </div>
 </template>
   
