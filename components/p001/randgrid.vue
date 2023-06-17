@@ -7,16 +7,17 @@
         <div class="grids-output">
           <div class="grid-result">
             <!-- result itself -->
-            <div
-              class="grid-result-image"
-              :style="{ flexDirection: gridOrientation }"
-            >
+            <div class="grid-result-image" :style="{ flexDirection: gridtype }">
               <!-- GRID IMAGE -->
               <div
                 class="divider"
                 v-for="(obj, index) in generatedDivs"
                 :key="index"
-                :style="{ backgroundColor: obj.color }"
+                :style="{
+                  backgroundColor: obj.color,
+                  color: 'white',
+                  height: `${obj.size}%`,
+                }"
               >
                 <!-- {{ obj }} -->
               </div>
@@ -38,9 +39,9 @@
           <v-divider></v-divider>
 
           <v-card-text>
-            <h4>Orientation: {{ gridState.orientation }}</h4>
+            <h4>Type: {{ gridState.type }}</h4>
             <!-- radios for h v -->
-            <v-radio-group v-model="gridState.orientation">
+            <v-radio-group v-model="gridState.type">
               <v-radio
                 label="Horizontal"
                 value="horizontal"
@@ -50,12 +51,16 @@
             </v-radio-group>
 
             <h4>
-              Dividers: {{ gridState.dividers }}
-              <v-text-field
+              Dividers: {{ dividers - 1 }}
+              <v-slider v-model="dividers" min="2" max="100" step="1"
+                >Size</v-slider
+              >
+
+              <!-- <v-text-field
                 variant="outlined"
                 density="compact"
                 v-model="gridState.dividers"
-              ></v-text-field>
+              ></v-text-field> -->
             </h4>
 
             <h4>Randomness:</h4>
@@ -86,7 +91,7 @@
               type="submit"
               size="large"
               color="green"
-              @click.prevent="handleRegenerate"
+              @click.prevent="handleRegenerateAll"
               >(RE)GENERATE</v-btn
             >
           </v-card-actions>
@@ -106,53 +111,80 @@ export default {
   data() {
     return {
       gridState: {
-        orientation: "horizontal",
+        type: "horizontal",
         randomness: {
           size: 0,
           color: 0,
         },
-        dividers: 5,
       },
-      regenerate: false,
+      dividers: 5,
+
+      regenerateAll: false,
       generatedDivs: [],
     };
   },
   computed: {
-    gridOrientation() {
-      if (this.gridState.orientation === "horizontal") {
-        return "row";
-      } else {
+    gridtype() {
+      if (this.gridState.type === "horizontal") {
         return "column";
+      } else {
+        return "row";
       }
     },
   },
   mounted() {
-    this.generatedDivs = this.gridDivs();
+    this.generatedDivs = this.getDivs();
+    // this.getRandomSizes();
   },
   watch: {
-    regenerate() {
-      this.generatedDivs = this.gridDivs();
+    regenerateAll() {
+      this.generatedDivs = this.getDivs();
     },
-    gridState: {
-      handler() {
-        console.log("gridstate changed");
-        this.generatedDivs = this.gridDivs();
-      },
-      deep: true,
+    dividers() {
+      this.generatedDivs = this.getDivs();
     },
+    // gridState: {
+    //   handler() {
+    //     console.log("gridstate changed");
+    //     this.generatedDivs = this.getDivs();
+    //   },
+    //   deep: true,
+    // },
   },
   methods: {
-    gridDivs() {
+    getRandomSizes() {
+      const output = [];
+      let sum = 0;
+
+      for (let i = 0; i < this.dividers - 1; i++) {
+        const remaining = 100 - sum;
+        const maxSize = Math.min(remaining, 50);
+        const nextSize = Math.floor(Math.random() * maxSize) + 1;
+        sum += nextSize;
+        output.push(nextSize);
+      }
+
+      output.push(100 - sum);
+      return output;
+    },
+    getDivs() {
       let output = [];
 
-      for (let i = 0; i < this.gridState.dividers; i++) {
+      for (let i = 0; i < this.dividers; i++) {
         let obj = {
-          size: Math.floor(Math.random() * this.gridState.randomness.size),
+          // size: Math.floor(Math.random() * this.gridState.randomness.size),
           color: this.randomColor(),
         };
 
         output.push(obj);
       }
+
+      const sizes = this.getRandomSizes();
+      console.log(sizes);
+      output.forEach((el, index) => {
+        el.size = sizes[index];
+      });
+      console.log(output);
       return output;
     },
     randomColor() {
@@ -169,8 +201,8 @@ export default {
       e.preventDefault();
       console.log("submit");
     },
-    handleRegenerate() {
-      this.regenerate = !this.regenerate;
+    handleRegenerateAll() {
+      this.regenerateAll = !this.regenerateAll;
     },
   },
 };
