@@ -16,3 +16,19 @@
     </nav>
   </div>
 </template>
+
+<style lang="scss">
+.layout-nav {
+  height: 100%;
+  width: 300px;
+  width: fit-content;
+  padding: 1rem;
+  background-color: darkgrey;
+  height: 100vh;
+  border: 2px solid purple;
+
+  a {
+    text-decoration: none;
+    color: black;
+  }
+}</style>

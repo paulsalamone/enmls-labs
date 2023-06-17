@@ -1,57 +1,34 @@
 <template>
-  <v-app class="layout-page">
-    <div class="layout-content">
-      <SidebarNav class="layout-nav" />
-      <main>
-        <!-- <TopBar /> -->
-        <NuxtPage />
-      </main>
-    </div>
+  <v-app>
+    <!-- UTIL BAR -->
+    <!-- <v-system-bar color="purple-darken-4
+">
+  <v-icon icon="mdi-wifi-strength-4"></v-icon>
+  <v-icon icon="mdi-signal" class="ms-2"></v-icon>
+  <v-icon icon="mdi-battery" class="ms-2"></v-icon>
 
-    <Footer class="layout-footer" />
+  <span class="ms-2">3:13PM</span>
+</v-system-bar> -->
+
+<!-- MOBILE NAV -->
+<!-- <v-app-bar :elevation="1">
+    <v-icon icon="mdi-menu" class="ms-2"></v-icon>
+
+  
+  XP:   <v-icon icon="mdi-heart" class="ms-"></v-icon>
+</v-app-bar> -->
+
+<v-navigation-drawer color="blue" permanent location="left"  order="1" >
+<v-list-item>1 yoooo</v-list-item>
+<v-list-item>2 yoooo</v-list-item>
+<v-list-item>yoooo</v-list-item>
+<v-list-item>yoooo</v-list-item>
+
+</v-navigation-drawer>
+<!-- SIDEBAR NAV: temporary for when ENMLS is just for experiments -->
+    
+    <NuxtPage order="2" />
+
+    <!-- permanent footer -->
   </v-app>
 </template>
-
-<style lang="scss">
-.layout-page {
-  display: flex;
-  flex-direction: column;
-  align-items: space-between;
-  height: 100%;
-  /* border: 20px solid black; */
-}
-
-.layout-content {
-  /* border: 10px solid red; */
-  display: flex;
-  flex-direction: row;
-  height: 100%;
-  min-height: 100vh;
-}
-
-.layout-nav {
-  height: 100%;
-  //   width: 200px;
-  width: fit-content;
-  padding: 1rem;
-  background-color: darkgrey;
-  height: 100vh;
-
-  a {
-    text-decoration: none;
-    color: black;
-  }
-}
-
-.layout-footer {
-  position: absolute;
-  bottom: -20px;
-  background-color: black;
-  color: white;
-  width: 100vw;
-}
-
-main {
-  padding: 1rem;
-}
-</style>

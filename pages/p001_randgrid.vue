@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p-001-randbox />
+ <p001_randgrid></p001_randgrid>
   </div>
 </template>
   

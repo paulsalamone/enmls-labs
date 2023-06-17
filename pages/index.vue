@@ -9,6 +9,7 @@
         friebase etc)</i
       >
     </p>
+    <p>PROJECTS TO TRY/ADD: random box style saver, basic sequencer (with usage), one hit synth (i.e. kick drum synth with tone), best-of the open api stuff, ml5 spatial painter (read: facemesh + "painting" in p5 3d --> just do painter for now), webgl painter (with pixi?), basic blog</p>
     <h3>next steps:</h3>
     <ul>
       <li>create dynamic SLUG page</li>
