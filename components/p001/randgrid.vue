@@ -23,6 +23,7 @@
                 :key="index"
                 :style="{
                   backgroundColor: obj.color,
+                  borderRadius: obj.radius,
                   height:
                     this.gridType === 'full'
                       ? '100%'
@@ -36,7 +37,9 @@
                       ? `${obj.size}%`
                       : '100%',
                 }"
-              ></div>
+              >
+                <!-- {{ obj.radius }} -->
+              </div>
             </div>
 
             <!-- ADD NAMER!!! -->
@@ -80,14 +83,19 @@
             <v-slider v-model="randomColor" min="0" max="50" step="1"
               >Color</v-slider
             >
-            <v-label>Size: {{ gridState.randomness.size }}</v-label>
+            <v-label>Radius Range: {{ randomRadius }}</v-label>
+            <v-slider v-model="randomRadius" min="0" max="50" step="1"
+              >Size</v-slider
+            >
+
+            <!-- <v-label>Size: {{ gridState.randomness.size }}</v-label>
             <v-slider
               v-model="gridState.randomness.size"
               min="0"
               max="10"
               step="1"
               >Size</v-slider
-            >
+            > -->
 
             <!-- sliders for size and color -->
           </v-card-text>
@@ -125,6 +133,7 @@ export default {
         },
       },
       randomColor: 5,
+      randomRadius: 1,
       dividers: 5,
       sizesList: [],
       gridObjects: [],
@@ -203,6 +212,7 @@ export default {
             startingSaturation,
             startingLightness
           ),
+          radius: this.getRandomNumber(0, this.randomRadius).toString() + "px",
         };
 
         output.push(obj);
