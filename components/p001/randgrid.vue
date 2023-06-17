@@ -1,24 +1,27 @@
 <template>
   <div class="rand-grid">
-    <h1>randGrid</h1>
+    <h1>randGrid - {{ gridType }}</h1>
     <!-- <p>{{ gridState }}</p> -->
     <div class="app-grid">
       <v-sheet elevation="4">
         <div class="grids-output">
           <div class="grid-result">
             <!-- result itself -->
-            <div class="grid-result-image" :style="{ flexDirection: gridtype }">
+            <div class="grid-result-image" :style="{ flexDirection: gridType }">
               <!-- GRID IMAGE -->
               <div
-                class="divider"
+                class="divider grid-cell"
                 v-for="(obj, index) in generatedDivs"
                 :key="index"
                 :style="{
                   backgroundColor: obj.color,
                   color: 'white',
-                  height: `${obj.size}%`,
+                  height: gridType === 'row' ? '100%' : `${obj.size}%`,
+                  width: gridType === 'row' ? `${obj.size}%` : '100%',
                 }"
               >
+                <!-- vertical is going to be a row of shit -->
+                <!-- horizontal is going to be a column of shit -->
                 <!-- {{ obj }} -->
               </div>
             </div>
@@ -124,11 +127,11 @@ export default {
     };
   },
   computed: {
-    gridtype() {
+    gridType() {
       if (this.gridState.type === "horizontal") {
-        return "column";
-      } else {
         return "row";
+      } else {
+        return "column";
       }
     },
   },
@@ -152,6 +155,14 @@ export default {
     // },
   },
   methods: {
+    getSizeStyle(index) {
+      return `height: ${this.generatedDivs[index].size}%;`;
+      // if (this.gridState.type === "horizontal") {
+      //   return "h-" + this.generatedDivs[index].size;
+      // } else {
+      //   return "v-" + this.generatedDivs[index].size;
+      // }
+    },
     getRandomSizes() {
       const output = [];
       let sum = 0;
@@ -256,6 +267,11 @@ export default {
   }
 }
 
+.grid-cell {
+  // border: 0.5px dotted grey;
+  width: 100%;
+  height: 100%;
+}
 .grids-utils {
   padding: 1rem;
 }
