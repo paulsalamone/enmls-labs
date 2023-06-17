@@ -1,17 +1,24 @@
 <template>
   <div class="rand-grid">
-    <h1>randGrid</h1>
-    <!-- <p>{{ gridState }}</p> -->
+    <h1>randGrid - {{ gridType }} {{ fulLGridNumber }}</h1>
+    <!-- <p>FRs: {{ gridFRs }}</p>
+    <p>sizesList: {{ sizesList }}</p> -->
+
     <div class="app-grid">
       <v-sheet elevation="4">
         <div class="grids-output">
           <div class="grid-result">
             <!-- result itself -->
-            <div class="grid-result-image" :style="{ flexDirection: gridType }">
+            <!-- HOR / VER -->
+            <div
+              v-if="gridType !== 'full'"
+              class="grid-result-image"
+              :style="{ flexDirection: gridType, display: 'flex' }"
+            >
               <!-- GRID IMAGE -->
               <div
                 class="divider grid-cell"
-                v-for="(obj, index) in generatedDivs"
+                v-for="(obj, index) in gridObjects"
                 :key="index"
                 :style="{
                   backgroundColor: obj.color,
@@ -19,11 +26,27 @@
                   height: gridType === 'row' ? '100%' : `${obj.size}%`,
                   width: gridType === 'row' ? `${obj.size}%` : '100%',
                 }"
-              >
-                <!-- vertical is going to be a row of shit -->
-                <!-- horizontal is going to be a column of shit -->
-                <!-- {{ obj }} -->
-              </div>
+              ></div>
+            </div>
+            <!-- FULL -->
+            <div
+              v-else
+              class="grid-result-image"
+              :style="{
+                display: 'grid',
+                gridTemplateRows: gridRowsFRs,
+                gridTemplateColumns: gridColumnsFRs,
+              }"
+            >
+              <!-- GRID IMAGE -->
+              <div
+                class="divider grid-cell"
+                v-for="(obj, index) in gridObjects"
+                :key="index"
+                :style="{
+                  backgroundColor: obj.color,
+                }"
+              ></div>
             </div>
             <!-- button utils -->
             <div class="grid-result-buttons">
@@ -42,15 +65,16 @@
           <v-divider></v-divider>
 
           <v-card-text>
-            <h4>Type: {{ gridState.type }}</h4>
+            <h4>Type: {{ gridTypeSelector }}</h4>
             <!-- radios for h v -->
-            <v-radio-group v-model="gridState.type">
+            <v-radio-group v-model="gridTypeSelector">
               <v-radio
                 label="Horizontal"
                 value="horizontal"
                 checked="checked"
               ></v-radio
               ><v-radio label="Vertical" value="vertical"></v-radio>
+              <v-radio label="Full" value="full"></v-radio>
             </v-radio-group>
 
             <h4>
@@ -113,55 +137,82 @@ export default {
   // name: "randGrid",
   data() {
     return {
+      gridTypeSelector: "horizontal",
       gridState: {
-        type: "horizontal",
         randomness: {
           size: 0,
           color: 0,
         },
       },
       dividers: 5,
-
+      sizesList: [],
+      gridObjects: [],
       regenerateAll: false,
-      generatedDivs: [],
+      gridColumnsFRs: "",
+      gridRowsFRs: "",
     };
   },
   computed: {
     gridType() {
-      if (this.gridState.type === "horizontal") {
+      if (this.gridTypeSelector === "horizontal") {
+        return "column";
+      } else if (this.gridTypeSelector === "vertical") {
         return "row";
       } else {
-        return "column";
+        return "full";
       }
+    },
+
+    fulLGridNumber() {
+      return this.dividers * this.dividers;
     },
   },
   mounted() {
-    this.generatedDivs = this.getDivs();
-    // this.getRandomSizes();
+    this.gridObjects = this.getGridObjects();
   },
   watch: {
     regenerateAll() {
-      this.generatedDivs = this.getDivs();
+      this.gridObjects = this.getGridObjects();
     },
-    dividers() {
-      this.generatedDivs = this.getDivs();
+    dividers(val) {
+      console.log("dividers watcher:", val);
+      this.gridObjects = this.getGridObjects();
     },
-    // gridState: {
-    //   handler() {
-    //     console.log("gridstate changed");
-    //     this.generatedDivs = this.getDivs();
-    //   },
-    //   deep: true,
-    // },
+    gridTypeSelector(val) {
+      console.log("gridTypeSelector: ", val);
+      this.gridObjects = this.getGridObjects();
+    },
+    sizesList(val) {
+      console.log("sizesList", val);
+    },
   },
   methods: {
-    getSizeStyle(index) {
-      return `height: ${this.generatedDivs[index].size}%;`;
-      // if (this.gridState.type === "horizontal") {
-      //   return "h-" + this.generatedDivs[index].size;
-      // } else {
-      //   return "v-" + this.generatedDivs[index].size;
-      // }
+    getGridObjects() {
+      let output = [];
+
+      // will get number of dividers and generate random sizes
+      const totalDivisions =
+        this.gridTypeSelector !== "full" ? this.dividers : this.fulLGridNumber;
+
+      this.sizesList = this.getRandomSizes();
+
+      console.log(totalDivisions);
+      for (let i = 0; i < totalDivisions; i++) {
+        let obj = {
+          color: this.getRandomColor(),
+        };
+
+        output.push(obj);
+      }
+
+      output.forEach((el, index) => {
+        el.size = this.sizesList[index];
+        console.log("el.size", el.size);
+      });
+      console.log("sizes:", this.sizesList);
+
+      console.log(output);
+      return output;
     },
     getRandomSizes() {
       const output = [];
@@ -188,29 +239,23 @@ export default {
         }
       }
 
-      return output;
-    },
-    getDivs() {
-      let output = [];
-
-      for (let i = 0; i < this.dividers; i++) {
-        let obj = {
-          // size: Math.floor(Math.random() * this.gridState.randomness.size),
-          color: this.randomColor(),
-        };
-
-        output.push(obj);
+      // Shuffle the output array using Fisher-Yates algorithm
+      for (let i = output.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [output[i], output[j]] = [output[j], output[i]];
       }
 
-      const sizes = this.getRandomSizes();
-      console.log(sizes);
-      output.forEach((el, index) => {
-        el.size = sizes[index];
-      });
-      console.log(output);
+      this.gridColumnsFRs = output.map((el) => el + "fr").join(" ");
+
+      for (let i = output.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [output[i], output[j]] = [output[j], output[i]];
+      }
+
+      this.gridRowsFRs = output.map((el) => el + "fr").join(" ");
       return output;
     },
-    randomColor() {
+    getRandomColor() {
       const hue = Math.floor(Math.random() * 360);
       const saturation = Math.floor(Math.random() * 101) + "%";
       const lightness = Math.floor(Math.random() * 101) + "%";
@@ -258,7 +303,6 @@ export default {
   height: 400px;
   width: 400px;
   margin: 1rem;
-  display: flex;
   justify-content: space-between;
   align-items: space-between;
 }
