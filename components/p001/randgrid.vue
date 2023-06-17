@@ -1,6 +1,6 @@
 <template>
   <div class="rand-grid">
-    <h1>randGrid - {{ gridType }}</h1>
+    <h1>randGrid</h1>
     <!-- <p>{{ gridState }}</p> -->
     <div class="app-grid">
       <v-sheet elevation="4">
@@ -167,15 +167,27 @@ export default {
       const output = [];
       let sum = 0;
 
-      for (let i = 0; i < this.dividers - 1; i++) {
+      for (let i = 0; i < this.dividers; i++) {
         const remaining = 100 - sum;
-        const maxSize = Math.min(remaining, 50);
+
+        // Calculate maximum size based on number of dividers left
+        const maxDividersLeft = this.dividers - i;
+        const maxSize = Math.min(
+          remaining,
+          1 + Math.floor((remaining - maxDividersLeft) / maxDividersLeft)
+        );
+
         const nextSize = Math.floor(Math.random() * maxSize) + 1;
         sum += nextSize;
-        output.push(nextSize);
+
+        // Ensure last cell completes to 100%
+        if (i === this.dividers - 1) {
+          output.push(100 - sum + nextSize);
+        } else {
+          output.push(nextSize);
+        }
       }
 
-      output.push(100 - sum);
       return output;
     },
     getDivs() {
@@ -199,14 +211,10 @@ export default {
       return output;
     },
     randomColor() {
-      let baseColor = Math.floor(Math.random() * 255);
-
-      let baseRemainder = 255 - baseColor;
-
-      let r = Math.floor(Math.random() * 255) - baseRemainder;
-      let g = Math.floor(Math.random() * 255) - baseRemainder;
-      let b = Math.floor(Math.random() * 255) - baseRemainder;
-      return `rgb(${r}, ${g}, ${b})`;
+      const hue = Math.floor(Math.random() * 360);
+      const saturation = Math.floor(Math.random() * 101) + "%";
+      const lightness = Math.floor(Math.random() * 101) + "%";
+      return `hsl(${hue}, ${saturation}, ${lightness})`;
     },
     handleSubmit(e) {
       e.preventDefault();
