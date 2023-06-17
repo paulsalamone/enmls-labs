@@ -2,10 +2,10 @@
   <v-app class="layout-page">
     <div class="layout-content">
       <SidebarNav class="layout-nav" />
-      <main>
+      <v-main class="layout-main">
         <!-- <TopBar /> -->
         <NuxtPage />
-      </main>
+      </v-main>
     </div>
 
     <Footer class="layout-footer" />
@@ -51,7 +51,7 @@
   width: 100vw;
 }
 
-main {
-  padding: 1rem;
+.layout-main {
+  margin: 3rem 1.5rem;
 }
 </style>
