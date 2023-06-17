@@ -31,7 +31,7 @@
 
 .layout-nav {
   height: 100%;
-  //   width: 200px;
+  width: 200px;
   width: fit-content;
   padding: 1rem;
   background-color: darkgrey;

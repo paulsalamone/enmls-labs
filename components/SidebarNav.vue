@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav class="layout-nav">
+    <nav>
       <!-- MOBILE NAV HERE? -->
       <!-- <v-app-bar-nav-icon /> -->
       <!-- <v-app-bar-title> EMNLS </v-app-bar-title> -->

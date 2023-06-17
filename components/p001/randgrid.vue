@@ -1,7 +1,7 @@
 <template>
   <div class="rand-grid">
-    <h1>randGrid {{ gridOrientation }}</h1>
-
+    <h1>randGrid</h1>
+    <!-- <p>{{ gridState }}</p> -->
     <div class="app-grid">
       <v-sheet elevation="4">
         <div class="grids-output">
@@ -14,8 +14,9 @@
               <!-- GRID IMAGE -->
               <div
                 class="divider"
-                v-for="(obj, index) in gridDivs"
+                v-for="(obj, index) in generatedDivs"
                 :key="index"
+                :style="{ backgroundColor: obj.color }"
               >
                 <!-- {{ obj }} -->
               </div>
@@ -37,9 +38,9 @@
           <v-divider></v-divider>
 
           <v-card-text>
-            <h4>Orientation: {{ orientation }}</h4>
+            <h4>Orientation: {{ gridState.orientation }}</h4>
             <!-- radios for h v -->
-            <v-radio-group v-model="orientation">
+            <v-radio-group v-model="gridState.orientation">
               <v-radio
                 label="Horizontal"
                 value="horizontal"
@@ -49,33 +50,46 @@
             </v-radio-group>
 
             <h4>
-              Dividers: {{ dividers }}
+              Dividers: {{ gridState.dividers }}
               <v-text-field
                 variant="outlined"
                 density="compact"
-                v-model="dividers"
+                v-model="gridState.dividers"
               ></v-text-field>
             </h4>
 
             <h4>Randomness:</h4>
             <br />
-            <v-label>Size: {{ randomness.size }}</v-label>
-            <v-slider v-model="randomness.size" min="0" max="10" step="1"
+            <v-label>Size: {{ gridState.randomness.size }}</v-label>
+            <v-slider
+              v-model="gridState.randomness.size"
+              min="0"
+              max="10"
+              step="1"
               >Size</v-slider
             >
-            <v-label>Color: {{ randomness.color }}</v-label>
-            <v-slider v-model="randomness.color" min="0" max="10" step="1"
+            <v-label>Color: {{ gridState.randomness.color }}</v-label>
+            <v-slider
+              v-model="gridState.randomness.color"
+              min="0"
+              max="10"
+              step="1"
               >Color</v-slider
             >
 
             <!-- sliders for size and color -->
           </v-card-text>
 
-          <!-- <v-card-actions>
-              <v-btn variant="tonal" type="submit" size="large" color="green"
-                >(RE)GENERATE</v-btn
-              >
-            </v-card-actions> -->
+          <v-card-actions>
+            <v-btn
+              variant="tonal"
+              type="submit"
+              size="large"
+              color="green"
+              @click.prevent="handleRegenerate"
+              >(RE)GENERATE</v-btn
+            >
+          </v-card-actions>
           <!-- </form> -->
         </v-card>
       </div>
@@ -88,41 +102,75 @@
 
 <script>
 export default {
-  name: "randGrid",
+  // name: "randGrid",
   data() {
     return {
-      orientation: "horizontal",
-      randomness: {
-        size: 0,
-        color: 0,
+      gridState: {
+        orientation: "horizontal",
+        randomness: {
+          size: 0,
+          color: 0,
+        },
+        dividers: 5,
       },
-      dividers: 5,
+      regenerate: false,
+      generatedDivs: [],
     };
   },
   computed: {
     gridOrientation() {
-      if (this.orientation === "horizontal") {
+      if (this.gridState.orientation === "horizontal") {
         return "row";
       } else {
         return "column";
       }
     },
+  },
+  mounted() {
+    this.generatedDivs = this.gridDivs();
+  },
+  watch: {
+    regenerate() {
+      this.generatedDivs = this.gridDivs();
+    },
+    gridState: {
+      handler() {
+        console.log("gridstate changed");
+        this.generatedDivs = this.gridDivs();
+      },
+      deep: true,
+    },
+  },
+  methods: {
     gridDivs() {
       let output = [];
-      for (let i = 0; i < this.dividers; i++) {
+
+      for (let i = 0; i < this.gridState.dividers; i++) {
         let obj = {
-          size: Math.floor(Math.random() * this.randomness.size),
-          color: Math.floor(Math.random() * this.randomness.color),
+          size: Math.floor(Math.random() * this.gridState.randomness.size),
+          color: this.randomColor(),
         };
+
         output.push(obj);
       }
       return output;
     },
-  },
-  methods: {
+    randomColor() {
+      let baseColor = Math.floor(Math.random() * 255);
+
+      let baseRemainder = 255 - baseColor;
+
+      let r = Math.floor(Math.random() * 255) - baseRemainder;
+      let g = Math.floor(Math.random() * 255) - baseRemainder;
+      let b = Math.floor(Math.random() * 255) - baseRemainder;
+      return `rgb(${r}, ${g}, ${b})`;
+    },
     handleSubmit(e) {
       e.preventDefault();
       console.log("submit");
+    },
+    handleRegenerate() {
+      this.regenerate = !this.regenerate;
     },
   },
 };
@@ -165,7 +213,6 @@ export default {
 }
 
 .divider {
-  border: 1px dotted grey;
   height: 100%;
   width: 100%;
 }
