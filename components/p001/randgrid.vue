@@ -1,6 +1,7 @@
 <template>
   <div class="rand-grid">
     <h1>randGrid</h1>
+    <p>r color:{{ randomColor }}</p>
     <div class="app-grid">
       <v-sheet elevation="4">
         <!-- CONVERT TO COMPONENT -->
@@ -75,6 +76,10 @@
 
             <h4>Randomness:</h4>
             <br />
+            <v-label>Color: {{ randomColor }}</v-label>
+            <v-slider v-model="randomColor" min="0" max="50" step="1"
+              >Color</v-slider
+            >
             <v-label>Size: {{ gridState.randomness.size }}</v-label>
             <v-slider
               v-model="gridState.randomness.size"
@@ -82,14 +87,6 @@
               max="10"
               step="1"
               >Size</v-slider
-            >
-            <v-label>Color: {{ gridState.randomness.color }}</v-label>
-            <v-slider
-              v-model="gridState.randomness.color"
-              min="0"
-              max="10"
-              step="1"
-              >Color</v-slider
             >
 
             <!-- sliders for size and color -->
@@ -127,6 +124,7 @@ export default {
           color: 5,
         },
       },
+      randomColor: 5,
       dividers: 5,
       sizesList: [],
       gridObjects: [],
@@ -166,6 +164,9 @@ export default {
         this.gridObjects = this.getGridObjects();
       }
     },
+    randomColor(val) {
+      this.gridObjects = this.getGridObjects();
+    },
     sizesList(val) {
       console.log("sizesList", val);
     },
@@ -190,10 +191,18 @@ export default {
 
       this.sizesList = this.getRandomSizes();
 
+      const startingHue = Math.floor(Math.random() * 360);
+      const startingSaturation = Math.floor(Math.random() * 100);
+      const startingLightness = Math.floor(Math.random() * 100);
       console.log(totalDivisions);
+
       for (let i = 0; i < totalDivisions; i++) {
         let obj = {
-          color: this.getRandomColor(),
+          color: this.getRandomColor(
+            startingHue,
+            startingSaturation,
+            startingLightness
+          ),
         };
 
         output.push(obj);
@@ -201,9 +210,7 @@ export default {
 
       output.forEach((el, index) => {
         el.size = this.sizesList[index];
-        console.log("el.size", el.size);
       });
-      console.log("sizes:", this.sizesList);
 
       console.log(output);
       return output;
@@ -249,10 +256,57 @@ export default {
       this.gridRowsFRs = output.map((el) => el + "fr").join(" ");
       return output;
     },
-    getRandomColor() {
-      const hue = Math.floor(Math.random() * 360);
-      const saturation = Math.floor(Math.random() * 101) + "%";
-      const lightness = Math.floor(Math.random() * 101) + "%";
+    flipCoin(coin) {
+      // coin flip
+
+      const randomNumber = Math.random();
+      if (randomNumber < 0.5) {
+        coin = -coin;
+      } else {
+        coin = coin;
+      }
+
+      return coin;
+    },
+    getRandomNumber(min, max) {
+      const randomNumber = Math.random();
+
+      const scaledRandomNumber = randomNumber * (max - min + 1);
+
+      const shiftedRandomNumber = scaledRandomNumber + min;
+
+      const finalRandomNumber = Math.floor(shiftedRandomNumber);
+
+      return finalRandomNumber;
+    },
+
+    getRandomColor(startingHue, startingSaturation, startingLightness) {
+      const hue = Math.abs(
+        startingHue +
+          this.flipCoin(this.randomColor + this.getRandomNumber(0, 10))
+      );
+      const saturation =
+        Math.abs(
+          startingSaturation +
+            this.flipCoin(
+              this.getRandomNumber(
+                0,
+                100 - startingSaturation + this.randomColor
+              )
+            )
+        ) + "%";
+      const lightness =
+        Math.abs(
+          startingLightness +
+            this.flipCoin(
+              this.getRandomNumber(
+                0,
+                100 - startingLightness + this.randomColor
+              )
+            )
+        ) + "%";
+
+      console.log(`hsl(${hue}, ${saturation}, ${lightness})`);
       return `hsl(${hue}, ${saturation}, ${lightness})`;
     },
     handleSubmit(e) {
