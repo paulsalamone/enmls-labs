@@ -54,4 +54,9 @@
 .layout-main {
   margin: 3rem 1.5rem;
 }
+
+h1,
+h2 {
+  margin-bottom: 1.5rem;
+}
 </style>

@@ -14,3 +14,11 @@
     </nav>
   </div>
 </template>
+
+<style lang="scss">
+.logo {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: 3rem;
+  letter-spacing: -2px;
+}
+</style>
