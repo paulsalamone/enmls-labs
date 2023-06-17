@@ -1,19 +1,21 @@
 <template>
   <div class="rand-grid">
-    <h1>randGrid - {{ gridType }} {{ fulLGridNumber }}</h1>
-    <!-- <p>FRs: {{ gridFRs }}</p>
-    <p>sizesList: {{ sizesList }}</p> -->
+    <h1>randGrid</h1>
 
     <div class="app-grid">
       <v-sheet elevation="4">
         <div class="grids-output">
           <div class="grid-result">
-            <!-- result itself -->
             <!-- HOR / VER -->
             <div
               v-if="gridType !== 'full'"
               class="grid-result-image"
-              :style="{ flexDirection: gridType, display: 'flex' }"
+              :style="{
+                flexDirection: gridType !== 'full' ? gridType : null,
+                display: gridType !== 'full' ? 'flex' : 'grid',
+                gridTemplateRows: gridType === 'full' ? gridRowsFRs : null,
+                gridTemplateColumns: gridType === 'full' ? gridColumnFRs : null,
+              }"
             >
               <!-- GRID IMAGE -->
               <div
@@ -22,9 +24,8 @@
                 :key="index"
                 :style="{
                   backgroundColor: obj.color,
-                  color: 'white',
-                  height: gridType === 'row' ? '100%' : `${obj.size}%`,
-                  width: gridType === 'row' ? `${obj.size}%` : '100%',
+                  height: this.gridType === 'row' ? '100%' : `${obj.size}%`,
+                  width: this.gridType === 'row' ? `${obj.size}%` : '100%',
                 }"
               ></div>
             </div>
@@ -58,7 +59,6 @@
       </v-sheet>
       <div class="grids-utils">
         <v-card elevation="0">
-          <!-- <form action="" @submit="handleSubmit"> -->
           <v-card-item>
             <v-card-title> Grid Utils </v-card-title>
           </v-card-item>
@@ -66,7 +66,6 @@
 
           <v-card-text>
             <h4>Type: {{ gridTypeSelector }}</h4>
-            <!-- radios for h v -->
             <v-radio-group v-model="gridTypeSelector">
               <v-radio
                 label="Horizontal"
@@ -82,12 +81,6 @@
               <v-slider v-model="dividers" min="2" max="100" step="1"
                 >Size</v-slider
               >
-
-              <!-- <v-text-field
-                variant="outlined"
-                density="compact"
-                v-model="gridState.dividers"
-              ></v-text-field> -->
             </h4>
 
             <h4>Randomness:</h4>
@@ -140,8 +133,8 @@ export default {
       gridTypeSelector: "horizontal",
       gridState: {
         randomness: {
-          size: 0,
-          color: 0,
+          size: 5,
+          color: 5,
         },
       },
       dividers: 5,
@@ -162,7 +155,6 @@ export default {
         return "full";
       }
     },
-
     fulLGridNumber() {
       return this.dividers * this.dividers;
     },
@@ -180,13 +172,25 @@ export default {
     },
     gridTypeSelector(val) {
       console.log("gridTypeSelector: ", val);
-      this.gridObjects = this.getGridObjects();
+      if (val === "full") {
+        this.gridObjects = this.getGridObjects();
+      }
     },
     sizesList(val) {
       console.log("sizesList", val);
     },
   },
   methods: {
+    getDimension(orientation) {
+      if (this.gridType === "full") {
+        return null;
+      } else if (orientation === "height") {
+        this.gridType === "row" ? "100%" : `${obj.size}%`;
+      } else {
+        this.gridType === "row" ? `${obj.size}%` : "100%";
+      }
+    },
+
     getGridObjects() {
       let output = [];
 
