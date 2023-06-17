@@ -1,54 +1,45 @@
 <template>
   <div class="rand-grid">
     <h1>randGrid</h1>
-
     <div class="app-grid">
       <v-sheet elevation="4">
+        <!-- CONVERT TO COMPONENT -->
         <div class="grids-output">
           <div class="grid-result">
-            <!-- HOR / VER -->
             <div
-              v-if="gridType !== 'full'"
               class="grid-result-image"
               :style="{
-                flexDirection: gridType !== 'full' ? gridType : null,
                 display: gridType !== 'full' ? 'flex' : 'grid',
+                flexDirection: gridType !== 'full' ? gridType : null,
                 gridTemplateRows: gridType === 'full' ? gridRowsFRs : null,
-                gridTemplateColumns: gridType === 'full' ? gridColumnFRs : null,
+                gridTemplateColumns:
+                  gridType === 'full' ? gridColumnsFRs : null,
               }"
             >
-              <!-- GRID IMAGE -->
               <div
                 class="divider grid-cell"
                 v-for="(obj, index) in gridObjects"
                 :key="index"
                 :style="{
                   backgroundColor: obj.color,
-                  height: this.gridType === 'row' ? '100%' : `${obj.size}%`,
-                  width: this.gridType === 'row' ? `${obj.size}%` : '100%',
+                  height:
+                    this.gridType === 'full'
+                      ? '100%'
+                      : this.gridType === 'row'
+                      ? '100%'
+                      : `${obj.size}%`,
+                  width:
+                    this.gridType === 'full'
+                      ? '100%'
+                      : this.gridType === 'row'
+                      ? `${obj.size}%`
+                      : '100%',
                 }"
               ></div>
             </div>
-            <!-- FULL -->
-            <div
-              v-else
-              class="grid-result-image"
-              :style="{
-                display: 'grid',
-                gridTemplateRows: gridRowsFRs,
-                gridTemplateColumns: gridColumnsFRs,
-              }"
-            >
-              <!-- GRID IMAGE -->
-              <div
-                class="divider grid-cell"
-                v-for="(obj, index) in gridObjects"
-                :key="index"
-                :style="{
-                  backgroundColor: obj.color,
-                }"
-              ></div>
-            </div>
+
+            <!-- ADD NAMER!!! -->
+
             <!-- button utils -->
             <div class="grid-result-buttons">
               <v-btn prepend-icon="mdi-wiper" variant="tonal">clear</v-btn
@@ -57,13 +48,13 @@
           </div>
         </div>
       </v-sheet>
+      <!-- CONVERT TO COMPONENT: GridUtils -->
       <div class="grids-utils">
         <v-card elevation="0">
           <v-card-item>
             <v-card-title> Grid Utils </v-card-title>
           </v-card-item>
           <v-divider></v-divider>
-
           <v-card-text>
             <h4>Type: {{ gridTypeSelector }}</h4>
             <v-radio-group v-model="gridTypeSelector">
@@ -75,7 +66,6 @@
               ><v-radio label="Vertical" value="vertical"></v-radio>
               <v-radio label="Full" value="full"></v-radio>
             </v-radio-group>
-
             <h4>
               Dividers: {{ dividers - 1 }}
               <v-slider v-model="dividers" min="2" max="100" step="1"
@@ -288,9 +278,6 @@ export default {
   /* border: 2px solid black; */
   width: 100%;
   height: auto; /* updated */
-}
-
-.grids-output {
 }
 
 .grid-result {
