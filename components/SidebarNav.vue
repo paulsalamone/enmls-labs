@@ -11,6 +11,11 @@
           randGrid</v-list-item
         ></NuxtLink
       >
+      <NuxtLink to="p002_randgrid2">
+        <v-list-item prepend-icon="mdi-view-dashboard">
+          randGrid2</v-list-item
+        ></NuxtLink
+      >
     </nav>
   </div>
 </template>

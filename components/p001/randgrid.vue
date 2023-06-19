@@ -1,12 +1,29 @@
 <template>
   <div class="rand-grid">
     <h1>randGrid</h1>
-    <p>r color:{{ randomColor }}</p>
+    <p>
+      Next steps: redo the whole logic so all other elements "freeze" when one
+      param is changed (prob requires a whole new component)
+    </p>
+    <p>
+      Also, add ability to give each one a name, save them, and retrieve them?
+      or at least download/print the div as jpeg, saved under given name
+    </p>
+    <p>
+      next version (toggle with added layer): random text? (with possibility of
+      word assocation to the colors)
+    </p>
+    <p>figure out diagonals (via css triangles)</p>
+    <p>randomize background?</p>
+    <p>add elevations</p>
+    <p>"jitter" (random x/y displacement)</p>
+    <p>"LFOs" (random deeper structures)</p>
     <div class="app-grid">
       <v-sheet elevation="4">
         <!-- CONVERT TO COMPONENT -->
         <div class="grids-output">
           <div class="grid-result">
+            <!-- META GRID -->
             <div
               class="grid-result-image"
               :style="{
@@ -17,6 +34,7 @@
                   gridType === 'full' ? gridColumnsFRs : null,
               }"
             >
+              <!-- CELLS -->
               <div
                 class="divider grid-cell"
                 v-for="(obj, index) in gridObjects"
@@ -360,6 +378,7 @@ export default {
   margin: 1rem;
   justify-content: space-between;
   align-items: space-between;
+  background-color: black;
 }
 
 .divider {
@@ -381,5 +400,9 @@ export default {
 }
 .grids-utils {
   padding: 1rem;
+}
+
+p {
+  margin: 0.5rem 0;
 }
 </style>
